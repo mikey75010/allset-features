@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Features · AllSet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* AllSet palette */
+    --cyan-100: #1ecdd2;
+    --cyan-80: #5fd8dc;
+    --cyan-20: #daf5f7;
+    --cyan-10: #e8fafa;
+
+    --sunflower-100: #f5bb4f;
+    --sunflower-20: #fdf2de;
+
+    --midnight-100: #372549;
+    --midnight-80: #5f506e;
+    --midnight-40: #afa8b6;
+    --midnight-20: #d6d4db;
+
+    --stone-100: #5f5a57;
+    --ink-100: #2b2b2b;
+
+    --shell-100: #f3f1eb;
+    --shell-20:  #fcfcfa;
+    --bg-soft: #fbfaf2;
+    --white: #ffffff;
+
+    --border: #e7e5df;
+    --radius-btn: 6px;
+    --radius-card: 14px;
+    --radius-badge: 12px;
+
+    --font: 'Inter', Helvetica, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    background: var(--white);
+    color: var(--ink-100);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    /* Mobile default — 20px horizontal */
+    max-width: none;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+  /* Tablet: 810+  →  30px horizontal */
+  @media (min-width: 810px) {
+    .wrap { padding-left: 30px; padding-right: 30px; }
+  }
+  /* Laptop: 1024+ →  40px horizontal */
+  @media (min-width: 1024px) {
+    .wrap { padding-left: 40px; padding-right: 40px; }
+  }
+  /* Desktop: 1280+ → 50px horizontal, centered */
+  @media (min-width: 1280px) {
+    .wrap {
+      padding-left: 50px;
+      padding-right: 50px;
+      max-width: 1280px;
+    }
+  }
+
+  /* ---------- Top controls row ---------- */
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 640px) {
+    .controls { grid-template-columns: 1fr; }
+  }
+
+  /* Search bar (Figma spec: 40px, Midnight 40 border, 6px radius, Inter Regular 16/24) */
+  .search { position: relative; }
+  .search svg {
+    position: absolute;
+    left: 12px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--stone-100);
+    pointer-events: none;
+  }
+  .search input {
+    width: 100%;
+    height: 40px;
+    padding: 0 14px 0 40px;
+    border: 1px solid var(--midnight-40);
+    border-radius: var(--radius-btn);
+    background: var(--white);
+    font-family: var(--font);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--ink-100);
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .search input::placeholder { color: var(--stone-100); }
+  .search input:focus {
+    outline: none;
+    border-color: var(--cyan-100);
+    box-shadow: 0 0 0 3px var(--cyan-10);
+  }
+
+  /* Buttons */
+  .btn {
+    font-family: var(--font);
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: 0.28px;
+    border-radius: var(--radius-btn);
+    border: 1px solid;
+    padding: 0 12px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color .15s, border-color .15s, color .15s;
+    user-select: none;
+  }
+  .btn-lg { height: 40px; padding: 0 16px; }
+
+  .btn-primary   { background: var(--cyan-100); border-color: var(--cyan-100); color: var(--white); }
+  .btn-primary:hover  { background: var(--cyan-80); }
+
+  .btn-tertiary  { background: var(--white); border-color: var(--midnight-40); color: var(--stone-100); }
+  .btn-tertiary:hover { background: var(--cyan-10); }
+  .btn-tertiary[aria-pressed="true"] { background: var(--bg-soft); }
+  .btn-tertiary[aria-pressed="true"]:hover { background: var(--bg-soft); }
+
+  .btn[disabled] { opacity: .4; cursor: not-allowed; }
+  .btn[disabled]:hover { background: var(--white); }
+
+  .select-wrap { position: relative; }
+  .select-wrap::after {
+    content: '';
+    position: absolute;
+    right: 14px; top: 50%;
+    width: 6px; height: 6px;
+    border-right: 1.5px solid var(--stone-100);
+    border-bottom: 1.5px solid var(--stone-100);
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events: none;
+  }
+  select.btn { appearance: none; -webkit-appearance: none; padding-right: 34px; }
+
+  /* ---------- Tag tabs ---------- */
+  .tabs-row { position: relative; margin-bottom: 14px; }
+  .tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 2px 0 6px;
+    mask-image: linear-gradient(to right, black calc(100% - 32px), transparent);
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 32px), transparent);
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { flex: 0 0 auto; }
+  .tab .count {
+    font-size: 12px;
+    font-weight: 500;
+    opacity: .65;
+    margin-left: 2px;
+  }
+
+  /* ---------- Status badges ---------- */
+  .statuses {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 22px;
+  }
+  .badge {
+    font-family: var(--font);
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--stone-100);
+    border-radius: var(--radius-badge);
+    padding: 3px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--white);
+    border: 1px solid transparent;
+  }
+
+  button.badge {
+    cursor: pointer;
+    font-family: var(--font);
+    transition: border-color .15s, filter .15s;
+  }
+  button.badge:hover { filter: brightness(.96); }
+  button.badge[aria-pressed="true"] { border-color: var(--stone-100); }
+
+  /* Filter-badge colors per status (Stone text throughout) */
+  .badge[data-status="live"]    { background: var(--cyan-10); }
+  .badge[data-status="beta"]    { background: var(--midnight-20); }
+  .badge[data-status="dev"]     { background: var(--sunflower-20); }
+  .badge[data-status="planned"] { background: var(--shell-100); }
+
+  /* ---------- Results meta ---------- */
+  .meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0 18px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--stone-100);
+  }
+  .meta .count-big { color: var(--ink-100); font-weight: 600; }
+
+  /* ---------- Grid + cards ---------- */
+  .grid {
+    display: grid;
+    /* Mobile: 1 column */
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  /* Tablet: 2 columns */
+  @media (min-width: 810px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  /* Laptop + Desktop: 3 columns */
+  @media (min-width: 1024px) {
+    .grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  .card {
+    background: var(--shell-20);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color .2s;
+  }
+  .card:hover { border-color: var(--midnight-40); }
+  .card-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .status-icon {
+    flex: 0 0 auto;
+    width: 24px; height: 24px;
+    display: block;
+  }
+  /* Card icon color per status */
+  .card[data-status="live"]    .status-icon { color: var(--cyan-100); }
+  .card[data-status="beta"]    .status-icon { color: var(--midnight-100); }
+  .card[data-status="dev"]     .status-icon { color: var(--sunflower-100); }
+  .card[data-status="planned"] .status-icon { color: var(--shell-100); }
+
+  .card-title {
+    font-weight: 700;
+    font-size: 15.5px;
+    line-height: 1.35;
+    letter-spacing: -.01em;
+    margin: 0;
+    color: var(--ink-100);
+  }
+  .card-desc {
+    font-size: 14px;
+    color: var(--stone-100);
+    line-height: 1.55;
+    margin: 0;
+  }
+  .card-foot {
+    margin-top: auto;
+    padding-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .tag {
+    font-family: var(--font);
+    font-size: 11px;
+    color: var(--stone-100);
+    padding: 3px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--white);
+  }
+
+  /* ---------- Load more ---------- */
+  .load-more-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+  }
+
+  /* ---------- Empty state ---------- */
+  .empty {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--stone-100);
+  }
+  .empty strong {
+    display: block;
+    color: var(--ink-100);
+    font-size: 18px;
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+
+  mark { background: var(--cyan-10); color: inherit; padding: 0 1px; border-radius: 2px; }
+
+  /* Inline SVG symbols use currentColor */
+  .icon-svg { width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+
+<!-- Inline SVG symbol definitions (colors via currentColor) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- allset chat done -->
+    <symbol id="icon-chat-done" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="1.5" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.5997 2.37562 15.1116 3.04346 16.4525C3.22094 16.8088 3.28001 17.2161 3.17712 17.6006L2.58151 19.8267C2.32295 20.793 3.20701 21.677 4.17335 21.4185L6.39939 20.8229C6.78393 20.72 7.19121 20.7791 7.54753 20.9565C8.88837 21.6244 10.4003 22 12 22Z"/>
+      <path fill="currentColor" d="M10.5775 15.1675C10.3775 15.1675 10.1875 15.0875 10.0475 14.9475L7.2175 12.1175C6.9275 11.8275 6.9275 11.3475 7.2175 11.0575C7.5075 10.7675 7.9875 10.7675 8.2775 11.0575L10.5775 13.3575L15.7175 8.2175C16.0075 7.9275 16.4875 7.9275 16.7775 8.2175C17.0675 8.5075 17.0675 8.9875 16.7775 9.2775L11.1075 14.9475C10.9675 15.0875 10.7775 15.1675 10.5775 15.1675Z"/>
+    </symbol>
+    <!-- allset chat clear -->
+    <symbol id="icon-chat-clear" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="1.5" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.5997 2.37562 15.1116 3.04346 16.4525C3.22094 16.8088 3.28001 17.2161 3.17712 17.6006L2.58151 19.8267C2.32295 20.793 3.20701 21.677 4.17335 21.4185L6.39939 20.8229C6.78393 20.72 7.19121 20.7791 7.54753 20.9565C8.88837 21.6244 10.4003 22 12 22Z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+
+  <div class="controls">
+    <label class="search">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+      <input id="q" type="search" placeholder="Search" autocomplete="off" spellcheck="false">
+    </label>
+    <div class="select-wrap">
+      <select id="sort" class="btn btn-tertiary btn-lg" aria-label="Sort">
+        <option value="default">Default order</option>
+        <option value="az">Name A → Z</option>
+        <option value="za">Name Z → A</option>
+        <option value="status">By status</option>
+      </select>
+    </div>
+    <button id="clear" class="btn btn-tertiary btn-lg" type="button" disabled>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      Clear
+    </button>
+  </div>
+
+  <div class="tabs-row">
+    <div id="tabs" class="tabs" role="tablist"></div>
+  </div>
+
+  <div id="statuses" class="statuses"></div>
+
+  <div class="meta">
+    <div><span id="count" class="count-big">0</span> <span id="count-suffix">features</span></div>
+  </div>
+
+  <div id="grid" class="grid"></div>
+  <div class="load-more-wrap">
+    <button id="load-more" class="btn btn-tertiary btn-lg" type="button" hidden>Load more</button>
+  </div>
+  <div id="empty" class="empty" hidden>
+    <strong>No features match your filters</strong>
+    <span>Try clearing a filter or searching for something else.</span>
+  </div>
+
+</div>
+
+<script>
+// ---------- Data (with status rename) ----------
+const RAW_FEATURES = [{"id":"75555a20-525b-44d6-85d9-45cc43b3f29f","status":"live","name":"Booking Management","description":"Manage every booking from creation to completion — schedule, reschedule, cancel, and track all client appointments in one place.","tags":"bookings, dashboard"},{"id":"026783b0-9938-46fd-8f61-c5d8556ca88c","status":"live","name":"Create Booking","description":"Create a booking for any client — pick the service, date and time, and AllSet checks availability so nothing clashes.","tags":"bookings, dashboard"},{"id":"4eb381da-d6b8-4069-b5f7-2c78c2c5d40c","status":"live","name":"Search & Filter Bookings","description":"Find any booking fast with date range filters, status tabs (active or cancelled), past/future quick filters, and free-text search.","tags":"bookings, dashboard"},{"id":"f30f707f-aef6-4cb4-9dcf-fb98124b0cd5","status":"live","name":"Reschedule Booking","description":"Move a booking to a new date and time. AllSet checks the new slot is available and notifies the client automatically.","tags":"bookings, dashboard, whatsapp"},{"id":"58f446d4-1979-4a5d-b0f5-ba4cfd4bfc02","status":"live","name":"Cancel Booking","description":"Cancel a booking and let AllSet apply your refund policy automatically — full refund, partial refund, or credit back to the client's package.","tags":"bookings, payments, dashboard"},{"id":"43a7901a-1e48-486d-9852-03abb90a71b5","status":"live","name":"Batch Bookings","description":"Book multiple sessions for a client in one go — ideal for block-booking a week or filling a course.","tags":"bookings, dashboard"},{"id":"639ea1c3-ed78-4726-a100-9d58e4f98948","status":"live","name":"Recurring Bookings (Series)","description":"Set up repeating appointments — weekly, fortnightly, or monthly — with an end date or a set number of sessions. AllSet checks availability for the entire series and creates as many bookings as it can if some dates are unavailable. Time slots correctly respect your custom slot intervals.","tags":"bookings, dashboard, scheduling"},{"id":"81b6f0df-c615-4716-8483-78f08dffec6e","status":"live","name":"Calendar View","description":"See all your bookings on a monthly calendar alongside events from connected Google or Outlook calendars.","tags":"bookings, dashboard, calendar"},{"id":"a7e5d917-ab17-40f8-bd73-7965ed13af7b","status":"live","name":"Booking Notifications","description":"Clients get automatic WhatsApp messages when a booking is created, rescheduled, or cancelled — no manual chasing needed.","tags":"bookings, whatsapp, automation"},{"id":"d37d61d8-ea96-4ddd-894b-ca706c153e4a","status":"live","name":"Booking Rules","description":"Set rules per service: maximum bookings per client, minimum notice period, and date restrictions to control when bookings can be made.","tags":"bookings, dashboard, setup"},{"id":"42e68150-450d-4eac-958a-07f2547c2465","status":"live","name":"Booking Payment Methods","description":"Choose how each booking is paid: request card payment, use package credits, or mark as zero cost.","tags":"bookings, payments, dashboard"},{"id":"651f597b-f2ce-4f12-bddf-b2d20630e808","status":"live","name":"Service Management","description":"Set up and manage the services you offer — pricing, duration, availability, and optional extras — all from one place.","tags":"setup, dashboard"},{"id":"288422df-bebb-468f-ae29-bcf259a0e1a7","status":"live","name":"Create & Edit Services","description":"Add new services or update existing ones — set the name, description, duration, and price in your local currency.","tags":"setup, dashboard"},{"id":"35593eaf-aca3-4935-825e-cfa46454da52","status":"live","name":"Service Pricing","description":"Set prices per service, with different pricing available for each location if you operate from multiple sites.","tags":"payments, setup"},{"id":"ed967df9-330f-43fd-a5c1-2d0402b190bf","status":"live","name":"Service Duration","description":"Set how long each service takes. AllSet uses this to calculate available time slots and prevent overbooking.","tags":"scheduling, setup"},{"id":"13a6c87b-5e87-4f4a-85e2-0c6ba7f1127d","status":"live","name":"Service Timetable","description":"Set specific working hours for each service, per day of the week — useful when certain services are only available at certain times.","tags":"scheduling, setup, dashboard"},{"id":"a3c2b8bd-f244-4eee-879b-4f00303e387e","status":"live","name":"Timetable Overrides","description":"Override your regular hours for specific dates — holiday hours, special events, or early finishes. When adding an override, you can choose to apply it to just one service or all your active services at once.","tags":"scheduling, dashboard"},{"id":"4f41a33f-96fc-40ef-8e4c-63516c0400a8","status":"live","name":"Service Options (Upsells)","description":"Offer optional upgrades on top of your services — like aromatherapy add-ons or deluxe upgrades — each with its own price.","tags":"bookings, payments, dashboard"},{"id":"995b21d7-0fb0-41d4-8228-fada9fffe984","status":"beta","name":"Add-Ons","description":"Sell products alongside your services — protein shakes, hair products, recovery supplements — priced per item.","tags":"payments, dashboard"},{"id":"fd0de810-18f9-460f-b0a3-490d77a63cfd","status":"live","name":"Archive & Restore Services","description":"Hide services from active listings without deleting them. Archived services can be restored at any time.","tags":"dashboard"},{"id":"fb4d9c54-b63f-45e8-bd62-c791edf41d5f","status":"live","name":"Resource Requirements","description":"Define which staff, rooms, or equipment each service needs. Choose 'any available' or a specific person or resource.","tags":"scheduling, setup, dashboard"},{"id":"85101804-9b41-4505-9c92-99fa8f01fbe9","status":"live","name":"Client Management","description":"All your clients in one place — contact details, booking history, credit balances, and communication preferences.","tags":"clients, dashboard"},{"id":"ee63dbd9-88e6-4d54-b164-a53b4f1b1ec1","status":"live","name":"Create & Edit Clients","description":"Add clients with their name, phone number, and email. Phone numbers are validated for international format automatically.","tags":"clients, dashboard"},{"id":"62fe6815-87fb-4394-abe5-5c4ab88b177a","status":"live","name":"Search & Filter Clients","description":"Find any client instantly with free-text search across names and contact details.","tags":"clients, dashboard"},{"id":"aa02d5cd-9a6f-4722-a524-5db82aa35898","status":"live","name":"Pagination & Sorting","description":"Browse large client lists with configurable page sizes (10/25/50/100) and sort by name or creation date.","tags":"clients, dashboard"},{"id":"acb5ade7-52bf-4ef9-9bcc-57cd6d307c24","status":"live","name":"Archive & Restore Clients","description":"Move inactive clients to archive to keep your active list clean. Restore archived clients when needed.","tags":"clients, dashboard"},{"id":"a66d83a7-d94e-42db-9e19-0e83deb284ff","status":"live","name":"Client Invitations via WhatsApp","description":"Send a personalised WhatsApp invite to any client, bringing them straight into your booking chat.","tags":"clients, whatsapp"},{"id":"1f9a37c2-b2e3-4726-85eb-4f6dd8d9d7b8","status":"live","name":"Dormant Client Detection","description":"AllSet flags clients who haven't booked recently, so you can spot who's drifting and re-engage before they're gone.","tags":"clients, operations"},{"id":"d64998d4-568f-4898-910a-67f0d30a197f","status":"live","name":"QR Code Sharing","description":"Share your business QR code so new clients can start a WhatsApp chat and book straight away.","tags":"clients, whatsapp"},{"id":"a767967c-b33f-4136-bd51-af05330c6be7","status":"live","name":"Package Management","description":"Sell pre-paid bundles, courses, and subscriptions — giving clients a reason to commit and you a steadier income.","tags":"packages, payments, dashboard"},{"id":"b5be6f61-4ef9-4e40-b0c1-444fa67f6775","status":"live","name":"Service Credit Packages","description":"Bundle service credits at a set price. Clients buy the package and use credits each time they book.","tags":"packages, payments"},{"id":"7678357d-f997-427a-8488-f1e990801f76","status":"live","name":"Course Packages","description":"Sell multi-session courses — like a 6-week programme — with a fixed number of sessions and your cancellation policy built in.","tags":"packages, bookings"},{"id":"6b37e4f0-7bb6-4841-82c9-dea3fb0b55ad","status":"live","name":"Subscription Packages","description":"Offer monthly subscriptions with set service entitlements and credit allowances. Billing handled automatically through Stripe. You can now set a fixed billing day (e.g. the 1st or 15th of each month) so every subscriber renews on the same date, with prorated credits for the period before their first renewal.","tags":"packages, payments, stripe"},{"id":"bffa186d-92ad-45e1-ade7-bd6742376a7d","status":"live","name":"Archive & Restore Packages","description":"Hide discontinued packages from active listings. Restore them when needed.","tags":"packages, dashboard"},{"id":"46d02df0-d86c-4cf9-a5ab-88d698673042","status":"live","name":"Service Credit Management","description":"See every client's credit balance at a glance and adjust as needed — add, deduct, or extend expiry.","tags":"credits, dashboard, clients"},{"id":"ca30a9ec-dffd-4785-9599-1084ac09ccde","status":"live","name":"View Credit Balances","description":"See remaining credits per client per package at a glance. Low-credit and zero-credit alerts flag clients who may need a top-up.","tags":"credits, dashboard"},{"id":"e6bdfc70-20e7-48a1-ac82-753b30973a6e","status":"live","name":"Add Credits","description":"Manually add credits to a client's account — as a goodwill gesture, correction, or reward.","tags":"credits, dashboard"},{"id":"f3b4cab4-1f08-4801-9efa-8bcbc17b9d46","status":"live","name":"Deduct Credits","description":"Deduct credits from a client's balance with a recorded reason, keeping a clear audit trail.","tags":"credits, dashboard"},{"id":"b1574d3c-afaf-4aab-bab5-426d5944d848","status":"live","name":"Credit History","description":"View the complete transaction history of a client's credits: additions, deductions, bookings, and manual adjustments with timestamps.","tags":"credits, dashboard"},{"id":"2e0ff96b-5174-414a-b22d-03002c32dc90","status":"live","name":"Credit Expiry Management","description":"Give service credits an expiry period — credits expire a set number of days or weeks after the subscription renews. Expired credits are blocked at booking time so nothing slips through. Set expiry when creating or editing a subscription package.","tags":"credits, dashboard"},{"id":"ac347827-b6e3-4ffd-b5e2-7b15e445affb","status":"live","name":"Payments & Billing","description":"Sessions and payments handled together. Accept cards, manage refunds, and keep every payment up to date.","tags":"payments, dashboard"},{"id":"779c9e35-6344-4251-9938-c9f066ad07e0","status":"live","name":"Stripe Connect","description":"Connect your Stripe account to start accepting payments. Supports card, Apple Pay, and Google Pay.","tags":"payments, setup, stripe"},{"id":"ca43bc04-0af2-4db8-b362-b6015507e726","status":"live","name":"Payment Collection","description":"AllSet sends a payment link in the WhatsApp chat after booking. Clients tap, pay by card or Apple Pay, and you're done.","tags":"payments, whatsapp"},{"id":"4eb95235-96ff-425c-bfd0-b6cbdacacd05","status":"live","name":"Payment Receipt Emails","description":"Clients receive an automatic email receipt after every payment — no manual paperwork.","tags":"payments, automation"},{"id":"f33d9055-4673-463f-98b8-c7bf46154d2c","status":"live","name":"Refund Processing","description":"When a booking is cancelled, AllSet processes the refund automatically based on your refund policy.","tags":"payments, automation"},{"id":"4d0a48eb-16b4-4531-b27d-d88e38984fe7","status":"in development","name":"Coupon & Discount Codes","description":"Create and manage discount coupon codes with configurable validity periods and discount rules.","tags":"payments, dashboard"},{"id":"87e8e5e7-6cb5-410e-8f45-914c8cf3d29c","status":"live","name":"Saved Payment Methods","description":"Clients can save their card for quicker payments next time. You can check whether a client has a saved card on file.","tags":"payments"},{"id":"64ab2987-a9a3-477a-aea0-2799dffa92fe","status":"live","name":"Scheduling & Availability","description":"Set your hours, manage staff and rooms, and let AllSet work out what's available — so your calendar fills without clashes.","tags":"scheduling, dashboard"},{"id":"972a6645-3ee6-4f17-be2a-6e6e0a4266fa","status":"in development","name":"Business Hours","description":"Set your regular operating hours for each day of the week per location.","tags":"scheduling, setup, dashboard"},{"id":"5d1d57de-624d-4bd8-9901-67f62e9f2c1b","status":"live","name":"Time Off / Blocked Time","description":"Block out holidays, personal time, or maintenance periods. AllSet removes those slots from availability automatically.","tags":"scheduling, dashboard"},{"id":"17196cb3-a996-4dbd-ac52-49be49eff3e4","status":"live","name":"Resource Management","description":"Manage your staff, rooms, and equipment. Each resource has its own availability schedule and can be linked to the services that need it.","tags":"scheduling, dashboard, setup"},{"id":"942b1d3f-87e5-47e7-997f-46c0f3622f0d","status":"live","name":"Resource Availability","description":"Set weekly schedules for each staff member, room, or piece of equipment — AllSet only offers time slots when the right resources are free.","tags":"scheduling, dashboard"},{"id":"6ac5c18c-f565-4e8e-a6a2-5ff6a32b75c2","status":"live","name":"Resource Blocked Time","description":"Block out specific staff or rooms for holidays, sick days, or maintenance. Bulk operations make it quick to manage across the team.","tags":"scheduling, dashboard"},{"id":"fee844e3-5ff3-4ed7-a96d-175eb1aa75db","status":"live","name":"Availability Engine","description":"AllSet automatically calculates available slots by combining your business hours, staff schedules, existing bookings, time off, and buffer time.","tags":"scheduling"},{"id":"6813442e-db66-4e8c-8227-e90c1a751de2","status":"live","name":"Buffer Time Between Bookings","description":"Set a gap between bookings per service — for prep, cleanup, or travel time — so you're never back-to-back when you shouldn't be.","tags":"scheduling, setup"},{"id":"6ff78833-e0da-4790-9b2e-32599acd3fbd","status":"live","name":"Timezone Support","description":"Each location runs in its own timezone. Clients and staff always see times in the right local format.","tags":"scheduling, setup"},{"id":"fa107e8e-77e9-4a1b-9ceb-1bf6d53f92a4","status":"live","name":"Multi-Location Support","description":"Run multiple locations — each with its own hours, pricing, staff, and services — all managed from one dashboard.","tags":"scheduling, dashboard, setup"},{"id":"b0af14a1-bf51-4546-990b-5ffe07db1b73","status":"live","name":"Calendar Synchronisation","description":"Sync your existing calendar so AllSet sees all your commitments — preventing double-bookings across your whole schedule.","tags":"calendar, integrations, scheduling"},{"id":"9f9421d1-83ef-4d9f-a0a5-ca23b3ba4b68","status":"live","name":"Google Calendar Sync","description":"Two-way sync with Google Calendar. Your Google events show in AllSet, and AllSet bookings appear in Google.","tags":"calendar, integrations"},{"id":"d1d63537-f24e-4e01-b8da-5e93d4a40e43","status":"planner","name":"Outlook Calendar Sync","description":"Two-way sync with Microsoft Outlook and Office 365 calendars.","tags":"calendar, integrations"},{"id":"2afb4cdd-3790-4859-bdd7-d52c9a1e05fb","status":"live","name":"External Event Display","description":"See events from all your connected calendars directly in your AllSet bookings view — one calendar for everything.","tags":"calendar, dashboard"},{"id":"5ce675fd-209f-42d7-aca5-92be9c887545","status":"live","name":"Sync Health Monitoring","description":"AllSet monitors calendar sync health and can replay missed updates if your calendar provider had an outage.","tags":"calendar, integrations"},{"id":"75cde416-48d0-4ec9-a6f5-cfeee7bdb572","status":"live","name":"WhatsApp Chatbot","description":"AI turns client chats into actions. Clients message what they need — bookings, rescheduling, cancellations, payments — and AllSet handles it.","tags":"whatsapp, bookings"},{"id":"34d3bbd2-99bc-4fdf-8313-e5e52a3369c9","status":"live","name":"Customer Booking via WhatsApp","description":"Clients message what they need and AllSet guides them through service selection, date, time, and confirmation — all in chat.","tags":"whatsapp, bookings"},{"id":"7977dced-ded8-4f6a-8f00-4aa6ab0d01b5","status":"live","name":"Booking Confirmations","description":"Every booking, change, or cancellation triggers an instant WhatsApp confirmation — clients always know where they stand.","tags":"whatsapp, automation, bookings"},{"id":"e61b3dae-752c-4d23-94bb-ba41e909d000","status":"live","name":"Payment Links via Chat","description":"Payment links sent right in the chat. Clients tap, pay by card or Apple Pay, and the booking is confirmed — no separate apps.","tags":"whatsapp, payments"},{"id":"991ff514-f440-4cbf-bed8-21ea98fce1f9","status":"live","name":"Client Self-Service","description":"Clients check their upcoming bookings, cancel, or reschedule — all through WhatsApp, without calling you or logging into anything.","tags":"whatsapp, bookings"},{"id":"4bf59b49-8c31-4a00-8359-9e23c8fa63ba","status":"live","name":"Phone Verification","description":"Verify client phone numbers through the chatbot to keep your contact list accurate and secure.","tags":"whatsapp, clients, security"},{"id":"73ee9dfe-7f63-4ee0-b7cc-b9121801d30e","status":"live","name":"One Number","description":"Everything runs through one WhatsApp number — every client, every booking, every payment, all in one place.","tags":"whatsapp, clients"},{"id":"e99579e1-a200-48b8-8ef2-9d9c25c61f88","status":"beta","name":"Automated Follow-Ups","description":"Create personalised follow-up campaigns and send them to clients as AI-powered WhatsApp conversations. Set the timing, pick a template, preview the chat, and AllSet handles the rest.","tags":"follow-ups, automation, whatsapp"},{"id":"ab09dd65-e80c-4a31-8e66-d5f8959644ba","status":"beta","name":"Follow-Up Workflows","description":"Create follow-up campaigns from scratch or from a template library of 25 ready-to-use scenarios. Edit the timing, the message flow, and preview the conversation before sending.","tags":"follow-ups, automation, dashboard"},{"id":"1474ae8a-0ad5-45fe-b7b0-6d5a6fb3cd2b","status":"planner","name":"Follow-Up Triggers","description":"Trigger follow-ups at the right moment: after booking, before appointment, after session, on course completion, or at subscription renewal.","tags":"follow-ups, automation"},{"id":"03a5b6a1-b93e-4f08-9f95-80e55a936412","status":"beta","name":"Follow-Up Execution Reports","description":"See exactly which follow-ups were sent, to whom, and when — with per-client response detail so you know your outreach is landing.","tags":"follow-ups, dashboard"},{"id":"8898946f-57f6-41a4-b0f0-1b2c0af0a432","status":"live","name":"Success Coach","description":"AllSet flags gaps, risks, and next steps — then nudges you with what to do. Your AI coach keeps the business moving.","tags":"operations, whatsapp"},{"id":"45ae8ac7-4a6d-4a5d-8f5b-b870eab3563f","status":"live","name":"Daily Coaching Nudges","description":"Daily WhatsApp nudges tailored to where your business is right now — setup steps, growth actions, or things that need attention.","tags":"operations, whatsapp"},{"id":"e8bed2c1-814f-4ff0-be5b-8ada51673580","status":"live","name":"Milestone Celebrations","description":"AllSet celebrates your wins — first booking, 10th client, Stripe connected — keeping you motivated as your business grows.","tags":"operations, whatsapp"},{"id":"792e0368-7820-4a9f-9c30-8f5602f06225","status":"live","name":"Onboarding Guidance","description":"AllSet tracks your setup progress and sends targeted guidance for anything you haven't completed yet.","tags":"operations, setup, whatsapp"},{"id":"59625222-76be-4fba-bbc8-f952e3fdb212","status":"live","name":"Dormant Business Intervention","description":"If your business goes quiet, AllSet reaches out to help you get back on track — before inactivity becomes a habit.","tags":"operations, whatsapp"},{"id":"1fb7b9db-c537-4bd7-83f1-aa483acecc13","status":"live","name":"Personal Assistant Chatbot","description":"Your personal business assistant in WhatsApp — daily summaries, instant updates on new bookings and payments, and answers when you need them.","tags":"operations, whatsapp"},{"id":"362436c4-18e8-4473-88ca-6ebecffc6d88","status":"live","name":"Daily Business Digest","description":"Start each day with a WhatsApp summary of what happened — new bookings, cancellations, payments received, and client activity.","tags":"operations, whatsapp"},{"id":"9a72cf15-86f2-4864-b63f-1dd0aef227a5","status":"in development","name":"Reactive Coaching","description":"Instant updates when something important happens — your first payment lands, a new client joins, or a pattern needs your attention.","tags":"operations, whatsapp"},{"id":"fc882a38-6c5c-48f3-8873-a12f0dfb8343","status":"live","name":"Conversational Assistant","description":"Message your PA in WhatsApp to ask questions, check stats, or get things done — like having a business-savvy colleague on call.","tags":"operations, whatsapp"},{"id":"af2df919-2ecd-4a14-883a-1c88a739ca40","status":"beta","name":"Engagement Module","description":"Personalised WhatsApp outreach that re-engages lapsed clients, gathers feedback, and promotes your services — powered by AI conversations.","tags":"follow-ups, whatsapp"},{"id":"8ade4f83-0c27-4745-b3e7-76711a391d20","status":"beta","name":"Engagement Campaigns","description":"Define who you want to reach, what you want to say, and how the conversation should flow. AllSet handles the rest.","tags":"follow-ups"},{"id":"83d3d514-8957-4835-a3f9-6bb2c66a0d8a","status":"beta","name":"Campaign Execution","description":"Launch engagement conversations with individual clients and track each one through to completion — from first contact to outcome.","tags":"follow-ups, whatsapp"},{"id":"89bbf230-5170-4caf-87be-f087a3a13f46","status":"beta","name":"Engagement Reports","description":"Get a summary report from each completed engagement conversation — what was discussed, the outcome, and what to do next.","tags":"follow-ups, operations"},{"id":"ee7a1ff7-b3af-442d-96a0-fddf461a6ffe","status":"live","name":"Dashboard & Analytics","description":"Your business at a glance — key numbers, setup progress, and quick access to everything you need.","tags":"dashboard, operations"},{"id":"65cbe008-fd4f-4174-8bf6-960f19b9fef9","status":"live","name":"Business Overview","description":"See your total services, packages, and client counts the moment you log in, with quick links to every section.","tags":"dashboard"},{"id":"3fc44f90-e791-48cf-b666-97baa5a995aa","status":"live","name":"Onboarding Progress","description":"A visual checklist of setup steps — see what's done and what's left so you can get up and running quickly.","tags":"dashboard, setup"},{"id":"52d58ac9-ace8-4476-b73d-24553309d0f8","status":"live","name":"Editable Business Name","description":"Change your business display name anytime, right from the dashboard.","tags":"dashboard, setup"},{"id":"34895254-07ca-4e6e-9795-f6f890e44eec","status":"live","name":"Activity Tracking","description":"See everything AllSet does on your behalf — messages sent, bookings handled, and how your usage maps to your plan.","tags":"operations, dashboard"},{"id":"426f3385-c9d4-4023-b82a-a4b12020f4d8","status":"live","name":"Activity Log","description":"Browse all sent messages by month — see who received what, when, and through which channel.","tags":"operations, dashboard"},{"id":"cffd9bb0-c53d-45cb-8f0c-02c7d81570d2","status":"live","name":"Usage & Credit Metrics","description":"Track your monthly usage at a glance. On a billed plan, see credit consumption and how it affects your balance. On a pre-paid plan, see message volumes and AllSet activity.","tags":"operations, dashboard"},{"id":"39b0935f-09c7-4bc6-9805-227b777d20d4","status":"live","name":"Activity Details","description":"Tap into any activity to see the full message, recipient, and details.","tags":"operations, dashboard"},{"id":"ca3f05d4-43d8-473a-ba3a-d43f4f80813f","status":"beta","name":"AllSet Subscription & Credits","description":"Manage your AllSet plan, buy credits, and keep track of payments — everything you need to stay subscribed.","tags":"payments, dashboard"},{"id":"78e4ec95-b0de-41f2-8bbe-89c2e54b128a","status":"beta","name":"Subscription Plans","description":"Browse AllSet plans — compare what's included and subscribe through Stripe.","tags":"payments, dashboard"},{"id":"5b063268-4b09-4ffe-9729-206272267ffe","status":"beta","name":"Credit Balance","description":"See your current credit balance — including monthly allowance and any top-ups you've purchased.","tags":"payments, dashboard"},{"id":"856c1296-1d2a-445a-b709-f055cb6a08f5","status":"beta","name":"Credit Top-Ups","description":"Buy extra credits whenever you need them. Top-up credits never expire, so they're always there when you need more.","tags":"payments, dashboard"},{"id":"220d1854-765d-4f91-bffd-84a79472c862","status":"beta","name":"Payment History","description":"View every subscription payment and credit purchase with links to receipts.","tags":"payments, dashboard"},{"id":"1e514ac6-5c2d-4f48-98c8-3cfca2468a4e","status":"beta","name":"Subscription Management","description":"Update your card, change your plan, or cancel — all through the Stripe customer portal.","tags":"payments, dashboard, stripe"},{"id":"39a65e0b-34ea-46ca-b9a0-9e4c4db28701","status":"live","name":"AI Chat Assistant","description":"AI support built into every page. Ask a question and get an answer that understands exactly where you are and what you're trying to do.","tags":"dashboard"},{"id":"5304ef02-8eaf-41c0-9e7f-229036f3e864","status":"live","name":"Contextual Page Help","description":"The AI knows which page you're on and gives relevant help straight away — no need to explain what you're looking at.","tags":"dashboard"},{"id":"5bab425b-8792-41e4-bd39-0d6d71182f7c","status":"live","name":"Knowledge Base","description":"A comprehensive knowledge base covering setup, feature guides, troubleshooting, and frequently asked questions — all searchable through the AI assistant.","tags":"dashboard"},{"id":"48c512bc-1ad6-436a-a4f9-d017e3fbeef3","status":"live","name":"Inline Chat Helpers","description":"Help links and icons throughout the dashboard that open the AI chat with the right question already filled in.","tags":"dashboard"},{"id":"ae282e02-f84d-4751-90b4-49d8ea9bd759","status":"live","name":"Account Management","description":"Manage your profile, security, and connected accounts.","tags":"dashboard, setup"},{"id":"6abaef46-8cda-490a-9cfc-a6e858701206","status":"live","name":"Profile Management","description":"View and update your name, email, sign-up date, and business QR code.","tags":"dashboard, setup"},{"id":"16961719-fd35-4105-85b0-709332aaa56a","status":"live","name":"Email Change","description":"Change your account email securely — both old and new addresses must confirm before the switch takes effect.","tags":"dashboard, security"},{"id":"c1c7376b-869e-43c8-a0c8-e54f0441a0ae","status":"live","name":"Password Management","description":"Change your password through a secure reset flow.","tags":"dashboard, security"},{"id":"41ae7b64-0afd-4148-ad31-a75c599ac912","status":"live","name":"Connected Accounts","description":"See which login providers (like Google) are linked to your account.","tags":"dashboard, security"},{"id":"186ce28d-8eaf-452f-964b-c2e17517012e","status":"live","name":"Account Deletion","description":"Request account deletion through our support team. We protect against accidental data loss.","tags":"dashboard, security"},{"id":"30197091-881e-4df7-b2f3-38f5966eadae","status":"live","name":"External Connections","description":"Connect and manage Stripe, Google Calendar, and other integrations from one page.","tags":"integrations, dashboard, setup"},{"id":"d8670c07-52aa-4eb8-932c-06df4e6e780a","status":"live","name":"Stripe Connection","description":"Connect, check status, or disconnect your Stripe payment account.","tags":"integrations, payments, dashboard"},{"id":"ded31141-b8ba-4534-9cc9-139d61bff1f9","status":"live","name":"Calendar Connections","description":"Link your Google or Outlook calendar through a simple sign-in flow.","tags":"integrations, calendar, dashboard"},{"id":"0b2e473c-dad4-4d43-987d-3bc6dc39f67c","status":"live","name":"Partner Management","description":"A dedicated dashboard for distribution partners to manage their tenant portfolio, track revenue, and oversee account access — secured with two-factor authentication.","tags":"partner, dashboard"},{"id":"0add9ba1-31a4-4a81-bfc6-75840b5652d8","status":"live","name":"Partner Dashboard Overview","description":"At-a-glance summary of your tenant portfolio — total tenant count, CRM reference coverage, and quick status indicators.","tags":"partner, dashboard"},{"id":"019be554-61b3-46a7-b530-84347660c537","status":"live","name":"Tenant Portfolio","description":"View all your tenants in one list — business name, owner, email, CRM reference, and tenant ID. Data is anonymised for privacy compliance.","tags":"partner, dashboard, clients"},{"id":"8f07d0b6-353b-4b64-a415-c411bf686c04","status":"live","name":"Affiliate Revenue & Commission","description":"Track your earnings month by month. See total revenue across all tenants, your commission per payment, and expand any tenant to view their full payment history.","tags":"partner, payments, dashboard"},{"id":"23ab49b2-ad31-44d6-8fb0-cb8d82b30d8b","status":"live","name":"Prepaid Subscription Billing","description":"For partners who pre-pay AllSet licenses for their team — view your tenants and their subscription status in one place.","tags":"partner, payments, dashboard"},{"id":"3dc9a133-39ab-43e6-b613-01993c5a8acb","status":"live","name":"Account Owners","description":"See who has access to your partner dashboard. New owners are added by the AllSet team on request.","tags":"partner, dashboard, security"},{"id":"f8e1e9cb-c6bc-4f29-9098-13c618a8d011","status":"live","name":"Two-Factor Authentication","description":"Every partner login is secured with mandatory two-factor authentication — magic link email plus a TOTP authenticator app code.","tags":"partner, security"},{"id":"b854d413-6d28-4a79-b00d-49fbd196b102","status":"live","name":"Internationalisation","description":"Support clients in multiple languages with localised service names, descriptions, and forms.","tags":"setup, clients"},{"id":"66c6a5eb-5d71-47dd-aeaf-6ddc1e6dc968","status":"live","name":"Multi-Language Labels","description":"Every service, package, add-on, and form supports translated labels — so your clients see content in their language.","tags":"setup, clients"},{"id":"eb0eff2f-89b2-4a62-8e5d-f211c8dc3ffd","status":"live","name":"Multi-Currency Support","description":"Set pricing in your local currency, with different currencies available per location.","tags":"payments, setup"},{"id":"f6176d8e-d1b7-455b-9401-b8f9851cec5d","status":"live","name":"Forms & Data Collection","description":"Collect the information you need from clients — during registration, before bookings, or as part of specific services.","tags":"clients, bookings, dashboard"},{"id":"e4450f7e-ddaa-4cfc-be7f-3bfd637bd46b","status":"live","name":"Customer Intake Forms","description":"Gather client details on their first booking — name, contact info, and any custom fields you need. Saved for next time.","tags":"clients, bookings"},{"id":"05fc7af7-cfe1-43a5-8651-aacd11d89daf","status":"live","name":"Service-Specific Forms","description":"Require clients to fill in a questionnaire before specific services — health screening, preferences, allergies, or anything you need to know.","tags":"bookings, clients"},{"id":"8dc76a6b-0986-4956-b7c6-e47e423445e5","status":"live","name":"Service Option Forms","description":"Collect extra information when a client selects a specific service option or add-on.","tags":"bookings, clients"},{"id":"f996b346-f0ce-4ac3-a386-c600ca36a48d","status":"live","name":"Security & Infrastructure","description":"Your data is private and protected — with full isolation between businesses, secure login, and a complete audit trail.","tags":"security"},{"id":"eea62b1d-b95a-4e25-92a0-6ade94671c05","status":"live","name":"Data Isolation","description":"Every business's data is fully isolated. No business can see another's clients, bookings, or settings — guaranteed at the database level.","tags":"security"},{"id":"972fab65-1bd1-4492-aff0-0b06a475f648","status":"live","name":"Authentication","description":"Secure login with Google sign-in or email and password.","tags":"security, setup"},{"id":"42b6f811-adb5-4b4f-80a7-88e010b5953b","status":"live","name":"Audit Trail","description":"Every change to your data is logged — who changed what, when, and what it was before.","tags":"security, operations"},{"id":"5f8c0b8c-89b8-4f84-9927-24dbe216dc16","status":"live","name":"Payment Security","description":"All payment notifications are verified cryptographically, ensuring no fraudulent transactions are processed.","tags":"security, payments"},{"id":"a0e037ee-2f1c-4cbd-bed3-b196982cc223","status":"in development","name":"Waitlist","description":"Let clients sign up when your services are fully booked, so you can reach out when a slot opens.","tags":"bookings, clients"},{"id":"f8051d3f-a913-49bf-a466-3de4aab5a7b9","status":"planner","name":"Voice Bot Integration","description":"Let clients book appointments by phone through an AI voice assistant.","tags":"bookings"},{"id":"20eb5d78-fcfc-4c1b-a532-fbc843f6abbe","status":"in development","name":"Gamification & Referrals","description":"Reward clients and grow your business with referral codes and redeemable rewards.","tags":"clients"},{"id":"8e9995cf-0155-4f28-82d2-c0ba66e272ee","status":"in development","name":"Custom Branding","description":"Customise your business look with your own branding, colours, and logo — shown to clients across AllSet.","tags":"setup, clients"},{"id":"c0950810-206b-4258-9d0b-124196f3bc1a","status":"planner","name":"External System Integrations","description":"Connect AllSet with your CRM, webhooks, and third-party tools through a flexible integration framework.","tags":"integrations, operations"},{"id":"ccdda8aa-7795-4eec-b723-352ad1585955","status":"planner","name":"iMessage Channel","description":"AllSet for iMessage — bringing the same booking, payment, and follow-up experience to Apple's messaging platform.","tags":"bookings, payments, follow-ups"},{"id":"9cd820b0-0f0c-485b-a957-0cf82617aaa5","status":"live","name":"Subscription Self-Service in Chat","description":"Clients can manage their own subscription directly in WhatsApp. If they message about cancelling, changing their plan, or updating payment details, AllSet sends them a secure link to do it themselves — no interruption to you.","tags":""},{"id":"08cd8e2a-ecc1-435c-b262-9427bf0fa6f4","status":"beta","name":"Engagement Template Library","description":"25 ready-to-use follow-up templates covering post-session feedback, re-engagement, goal reviews, wellness check-ins, referral requests, and more. Pick one, customise it, and launch — no starting from scratch.","tags":""}];
+const STATUS_RENAME = { 'in development': 'dev', 'planner': 'planned' };
+const FEATURES = RAW_FEATURES.map(f => ({
+  ...f,
+  status: STATUS_RENAME[f.status] || f.status
+}));
+
+// ---------- State ----------
+const state = {
+  q: '',
+  tags: new Set(),     // empty = All
+  statuses: new Set(),
+  sort: 'default'
+};
+
+// ---------- Proper nouns for sentence-case conversion ----------
+const PROPER_NOUNS = {
+  'allset':'AllSet','whatsapp':'WhatsApp','imessage':'iMessage',
+  'google':'Google','outlook':'Outlook','stripe':'Stripe','apple':'Apple',
+  'id':'ID','crm':'CRM','ai':'AI','totp':'TOTP','qr':'QR','pa':'PA',
+  'sms':'SMS','pdf':'PDF','csv':'CSV','api':'API'
+};
+
+// Sentence case: first word initial capital, rest lowercase, proper nouns preserved
+function toSentenceCase(str) {
+  if (!str) return str;
+  const parts = str.split(/(\s+|[—:–\-\/])/);
+  let firstWordFound = false;
+  return parts.map(part => {
+    if (/^\s+$/.test(part) || /^[—:–\-\/]$/.test(part) || part === '') return part;
+    const proper = PROPER_NOUNS[part.toLowerCase()];
+    if (proper) { firstWordFound = true; return proper; }
+    if (!firstWordFound) {
+      firstWordFound = true;
+      return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+    }
+    return part.toLowerCase();
+  }).join('');
+}
+
+// Tag label: proper-noun if known, else capitalize first letter
+function displayTag(tag) {
+  const proper = PROPER_NOUNS[tag.toLowerCase()];
+  return proper || (tag.charAt(0).toUpperCase() + tag.slice(1));
+}
+
+function displayStatus(s) {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+// ---------- Derive ----------
+const allTags = (() => {
+  const counts = new Map();
+  FEATURES.forEach(f => {
+    (f.tags || '').split(',').map(t => t.trim()).filter(Boolean).forEach(t => {
+      counts.set(t, (counts.get(t) || 0) + 1);
+    });
+  });
+  return [...counts.entries()].sort((a,b) => b[1] - a[1]);
+})();
+
+const STATUS_ORDER = ['live','beta','dev','planned'];
+const allStatuses = STATUS_ORDER.filter(s => FEATURES.some(f => f.status === s));
+
+// ---------- Renderers ----------
+const tabsEl = document.getElementById('tabs');
+const statusEl = document.getElementById('statuses');
+const gridEl = document.getElementById('grid');
+const emptyEl = document.getElementById('empty');
+const countEl = document.getElementById('count');
+const suffixEl = document.getElementById('count-suffix');
+const clearBtn = document.getElementById('clear');
+const loadMoreBtn = document.getElementById('load-more');
+
+// ---------- Pagination per breakpoint ----------
+// Desktop (≥1280): 3 cols × 5 rows = 15; Laptop (≥1024): 3 × 6 = 18;
+// Tablet  (≥810) : 2 cols × 5 rows = 10; Mobile: 8.
+function getBaseLimit() {
+  const w = window.innerWidth;
+  if (w >= 1280) return 15;
+  if (w >= 1024) return 18;
+  if (w >= 810)  return 10;
+  return 8;
+}
+let baseLimit = getBaseLimit();
+state.displayLimit = baseLimit;
+
+// On breakpoint change, reset limit back to that breakpoint's base
+window.addEventListener('resize', () => {
+  const next = getBaseLimit();
+  if (next !== baseLimit) {
+    baseLimit = next;
+    state.displayLimit = baseLimit;
+    render();
+  }
+});
+
+// Reset pagination whenever a filter/sort/search changes
+function applyFilterChange() {
+  state.displayLimit = baseLimit;
+  render();
+}
+
+function renderTabs() {
+  // "All" is always Primary; its aria-pressed is cosmetic-only
+  const parts = [`<button class="btn tab tab-all btn-primary" data-tag="all">All <span class="count">${FEATURES.length}</span></button>`];
+  allTags.forEach(([tag, count]) => {
+    const active = state.tags.has(tag);
+    parts.push(`<button class="btn tab btn-tertiary" data-tag="${tag}" aria-pressed="${active}">${displayTag(tag)} <span class="count">${count}</span></button>`);
+  });
+  tabsEl.innerHTML = parts.join('');
+}
+
+function renderStatuses() {
+  const parts = allStatuses.map(s => {
+    const pressed = state.statuses.has(s);
+    return `<button class="badge" data-status="${s}" aria-pressed="${pressed}">${displayStatus(s)}</button>`;
+  });
+  statusEl.innerHTML = parts.join('');
+}
+
+function filtered() {
+  const q = state.q.trim().toLowerCase();
+  let list = FEATURES.filter(f => {
+    if (state.tags.size) {
+      const featureTags = (f.tags || '').split(',').map(t => t.trim());
+      for (const t of state.tags) {
+        if (!featureTags.includes(t)) return false;
+      }
+    }
+    if (state.statuses.size && !state.statuses.has(f.status)) return false;
+    if (q) {
+      const hay = (f.name + ' ' + f.description + ' ' + (f.tags || '')).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  switch (state.sort) {
+    case 'az': list = [...list].sort((a,b) => a.name.localeCompare(b.name)); break;
+    case 'za': list = [...list].sort((a,b) => b.name.localeCompare(a.name)); break;
+    case 'status': {
+      const order = Object.fromEntries(STATUS_ORDER.map((s,i) => [s,i]));
+      list = [...list].sort((a,b) => (order[a.status]??9) - (order[b.status]??9) || a.name.localeCompare(b.name));
+      break;
+    }
+  }
+  return list;
+}
+
+function render() {
+  const list = filtered();
+  const total = list.length;
+  const shown = Math.min(total, state.displayLimit);
+  const visible = list.slice(0, shown);
+
+  if (total === 0) {
+    countEl.textContent = '0';
+    suffixEl.textContent = 'features';
+  } else if (shown < total) {
+    countEl.textContent = shown;
+    suffixEl.textContent = `of ${total} features`;
+  } else {
+    countEl.textContent = total;
+    suffixEl.textContent = total === 1 ? 'feature' : 'features';
+  }
+
+  if (total === 0) {
+    gridEl.innerHTML = '';
+    emptyEl.hidden = false;
+  } else {
+    emptyEl.hidden = true;
+    const q = state.q.trim();
+    gridEl.innerHTML = visible.map(f => cardHTML(f, q)).join('');
+  }
+
+  loadMoreBtn.hidden = shown >= total;
+
+  tabsEl.querySelectorAll('.tab').forEach(btn => {
+    if (btn.dataset.tag === 'all') return; // All stays Primary always
+    const active = state.tags.has(btn.dataset.tag);
+    btn.setAttribute('aria-pressed', active);
+  });
+  statusEl.querySelectorAll('.badge').forEach(btn => {
+    btn.setAttribute('aria-pressed', state.statuses.has(btn.dataset.status));
+  });
+
+  const anyFilter = state.q || state.tags.size || state.statuses.size || state.sort !== 'default';
+  clearBtn.disabled = !anyFilter;
+}
+
+function iconIdFor(status) {
+  return status === 'live' ? 'icon-chat-done' : 'icon-chat-clear';
+}
+
+function cardHTML(f, q) {
+  const tags = (f.tags || '').split(',').map(t => t.trim()).filter(Boolean);
+  const title = toSentenceCase(f.name);
+  const desc = f.description || '';
+  return `
+    <article class="card" data-status="${f.status}">
+      <div class="card-head">
+        <svg class="status-icon" aria-hidden="true"><use href="#${iconIdFor(f.status)}"/></svg>
+        <h3 class="card-title">${highlight(title, q)}</h3>
+      </div>
+      <p class="card-desc">${highlight(desc, q)}</p>
+      <div class="card-foot">
+        <span class="badge" data-status="${f.status}">${displayStatus(f.status)}</span>
+        ${tags.slice(0,3).map(t => `<span class="tag">${displayTag(t)}</span>`).join('')}
+        ${tags.length > 3 ? `<span class="tag">+${tags.length-3}</span>` : ''}
+      </div>
+    </article>
+  `;
+}
+
+function highlight(text, q) {
+  const safe = escapeHTML(text);
+  if (!q) return safe;
+  const re = new RegExp('(' + escapeRegExp(q) + ')', 'ig');
+  return safe.replace(re, '<mark>$1</mark>');
+}
+
+document.getElementById('q').addEventListener('input', e => {
+  state.q = e.target.value;
+  applyFilterChange();
+});
+document.getElementById('sort').addEventListener('change', e => {
+  state.sort = e.target.value;
+  applyFilterChange();
+});
+tabsEl.addEventListener('click', e => {
+  const btn = e.target.closest('.tab');
+  if (!btn) return;
+  const tag = btn.dataset.tag;
+  if (tag === 'all') {
+    state.tags.clear();
+  } else {
+    if (state.tags.has(tag)) state.tags.delete(tag);
+    else state.tags.add(tag);
+  }
+  applyFilterChange();
+});
+statusEl.addEventListener('click', e => {
+  const btn = e.target.closest('.badge');
+  if (!btn) return;
+  const s = btn.dataset.status;
+  if (state.statuses.has(s)) state.statuses.delete(s);
+  else state.statuses.add(s);
+  applyFilterChange();
+});
+clearBtn.addEventListener('click', () => {
+  state.q = '';
+  state.tags.clear();
+  state.statuses.clear();
+  state.sort = 'default';
+  document.getElementById('q').value = '';
+  document.getElementById('sort').value = 'default';
+  applyFilterChange();
+});
+loadMoreBtn.addEventListener('click', () => {
+  state.displayLimit += baseLimit;
+  render();
+});
+
+function escapeHTML(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function escapeRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+renderTabs();
+renderStatuses();
+render();
+</script>
+</body>
+</html>
