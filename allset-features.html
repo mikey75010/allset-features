@@ -39,7 +39,7 @@
     --font: 'Inter', Helvetica, sans-serif;
   }
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; }
+  html, body { margin: 0; padding: 0; height: 100%; }
   body {
     font-family: var(--font);
     background: var(--white);
@@ -47,12 +47,21 @@
     font-size: 15px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
+    /* Take the full iframe height; content scrolls inside .wrap */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
   .wrap {
     /* Mobile default — 20px horizontal. Top padding moved into .sticky-header so it stays visible when stuck. */
     max-width: none;
     margin: 0 auto;
     padding: 0 20px 80px;
+    /* This is the scroll container so position:sticky has something to stick to */
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    width: 100%;
   }
   /* Tablet: 810+  →  30px horizontal */
   @media (min-width: 810px) {
