@@ -101,12 +101,12 @@
     .controls { grid-template-columns: 1fr 1fr; }
     .search { grid-column: 1 / -1; }
     .select-btn, #clear { width: 100%; }
-    /* Tags wrap to multiple rows instead of single-row scroll */
-    .tabs {
-      flex-wrap: wrap;
-      overflow: visible;
+    /* Hide tag counts to save space */
+    .tab .count { display: none; }
+    /* Disable sticky so it scrolls with the page */
+    .sticky-header {
+      position: static;
     }
-    .tab-scroll { display: none; }
   }
 
   /* Search bar (Figma spec: 40px, Midnight 40 border, 6px radius, Inter Regular 16/24) */
