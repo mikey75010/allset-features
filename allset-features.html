@@ -369,6 +369,79 @@
     margin-top: 24px;
   }
 
+  /* ---------- Promo cards (always-on below feature grid) ---------- */
+  .promos {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 32px;
+  }
+  @media (min-width: 810px) {
+    .promos { grid-template-columns: repeat(2, 1fr); }
+  }
+  .promo {
+    padding: 22px;
+    border-radius: var(--radius-card);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .promo[data-promo="faq"]     { background: var(--sunflower-20); }
+  .promo[data-promo="pricing"] { background: var(--cyan-10); }
+  .promo .status-icon {
+    width: 24px;
+    height: 24px;
+    color: var(--ink-100);
+    margin-bottom: 4px;
+  }
+  .promo h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink-100);
+    letter-spacing: -0.01em;
+  }
+  .promo p {
+    margin: 0 0 12px;
+    font-size: 14px;
+    color: var(--stone-100);
+    line-height: 1.5;
+  }
+  .promo-cta {
+    align-self: flex-start;
+    text-decoration: none;
+  }
+
+  /* ---------- Back-to-top floating button ---------- */
+  .to-top {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    background: var(--ink-100);
+    color: var(--white);
+    border: 0;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    transform: translateY(12px);
+    pointer-events: none;
+    transition: opacity .2s, transform .2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    z-index: 20;
+  }
+  .to-top.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .to-top svg { width: 18px; height: 18px; display: block; }
+  .to-top:hover { background: var(--midnight-80); }
+
   /* ---------- Empty state ---------- */
   .empty {
     text-align: center;
@@ -402,6 +475,12 @@
     <!-- allset chat clear -->
     <symbol id="icon-chat-clear" viewBox="0 0 24 24">
       <path fill="none" stroke="currentColor" stroke-width="1.5" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.5997 2.37562 15.1116 3.04346 16.4525C3.22094 16.8088 3.28001 17.2161 3.17712 17.6006L2.58151 19.8267C2.32295 20.793 3.20701 21.677 4.17335 21.4185L6.39939 20.8229C6.78393 20.72 7.19121 20.7791 7.54753 20.9565C8.88837 21.6244 10.4003 22 12 22Z"/>
+    </symbol>
+    <!-- allset chat question -->
+    <symbol id="icon-chat-question" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="1.5" d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 13.5997 2.37562 15.1116 3.04346 16.4525C3.22094 16.8088 3.28001 17.2161 3.17712 17.6006L2.58151 19.8267C2.32295 20.793 3.20701 21.677 4.17335 21.4185L6.39939 20.8229C6.78393 20.72 7.19121 20.7791 7.54753 20.9565C8.88837 21.6244 10.4003 22 12 22Z"/>
+      <path fill="currentColor" stroke="currentColor" stroke-width="1.5" d="M12 7.75C13.2879 7.75 14.2499 8.71919 14.25 9.81152C14.25 10.5861 13.7269 11.0408 13.3281 11.3125L13.1709 11.416C12.9117 11.578 12.6562 11.7617 12.4727 12.002C12.2601 12.2804 12.1836 12.5784 12.1836 12.8799V13.125C12.1836 13.1455 12.1763 13.1695 12.1475 13.1963C12.1167 13.2249 12.066 13.25 12 13.25C11.9403 13.25 11.8888 13.2264 11.8545 13.1943C11.8209 13.1627 11.8164 13.1364 11.8164 13.125V12.8799C11.8165 11.9721 12.5087 11.506 12.9287 11.2354L12.9277 11.2344C13.1755 11.0772 13.419 10.8996 13.5957 10.6689C13.8003 10.4017 13.8828 10.1117 13.8828 9.81152C13.8827 8.76906 12.9901 8 12 8C11.0099 8 10.1173 8.76906 10.1172 9.81152C10.1172 9.82297 10.113 9.85011 10.0791 9.88184C10.0448 9.91387 9.99323 9.93652 9.93359 9.93652C9.87395 9.93652 9.82235 9.91388 9.78809 9.88184C9.75423 9.85011 9.75 9.82297 9.75 9.81152C9.75011 8.71919 10.7121 7.75 12 7.75Z"/>
+      <path fill="currentColor" stroke="currentColor" stroke-width="1.5" d="M12 15.75C12.1325 15.75 12.25 15.8675 12.25 16C12.25 16.139 12.1393 16.25 12 16.25C11.8607 16.25 11.75 16.139 11.75 16C11.75 15.8675 11.8675 15.75 12 15.75Z"/>
     </symbol>
     <!-- arrow-left -->
     <symbol id="icon-arrow-left" viewBox="0 0 24 24">
@@ -464,7 +543,32 @@
     <span>Try clearing a filter or searching for something else.</span>
   </div>
 
+  <div class="promos">
+    <div class="promo" data-promo="faq">
+      <svg class="status-icon" aria-hidden="true"><use href="#icon-chat-question"/></svg>
+      <h3>FAQ</h3>
+      <p>Find clear answers on setup, bookings, payments, approvals and day-to-day use.</p>
+      <a class="btn btn-secondary promo-cta" href="https://allset.chat/faq" target="_blank" rel="noopener">
+        Learn more
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>
+    <div class="promo" data-promo="pricing">
+      <svg class="status-icon" aria-hidden="true"><use href="#icon-chat-done"/></svg>
+      <h3>Pricing</h3>
+      <p>Discover our subscription tiers and get up to 1,000 free credits on sign-up.</p>
+      <a class="btn btn-secondary promo-cta" href="https://allset.chat/pricing" target="_blank" rel="noopener">
+        Learn more
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+
 </div>
+
+<button id="to-top" class="to-top" type="button" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>
+</button>
 
 <script>
 // ---------- Data (with status rename) ----------
@@ -764,6 +868,21 @@ renderTabs();
 renderStatuses();
 render();
 updateTabArrows();
+
+// ---------- Back-to-top button ----------
+const toTopBtn = document.getElementById('to-top');
+const scrollContainer = document.querySelector('.wrap');
+function updateToTopVisibility() {
+  if (scrollContainer.scrollTop > 200) {
+    toTopBtn.classList.add('is-visible');
+  } else {
+    toTopBtn.classList.remove('is-visible');
+  }
+}
+scrollContainer.addEventListener('scroll', updateToTopVisibility);
+toTopBtn.addEventListener('click', () => {
+  scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
+});
 </script>
 </body>
 </html>
