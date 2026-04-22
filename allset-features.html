@@ -61,12 +61,19 @@
     /* Mobile default — 20px horizontal. Top padding moved into .sticky-header so it stays visible when stuck. */
     max-width: none;
     margin: 0 auto;
-    padding: 0 20px 80px;
+    padding: 0 20px 40px;
     /* This is the scroll container so position:sticky has something to stick to */
     flex: 1;
     min-height: 0;
     overflow-y: auto;
     width: 100%;
+  }
+  /* Clear endpoint at the bottom of the scroll region — 1px Midnight 20 stroke */
+  .wrap::after {
+    content: "";
+    display: block;
+    border-top: 1px solid var(--midnight-20);
+    margin-top: 48px;
   }
   /* Tablet: 810+  →  30px horizontal */
   @media (min-width: 810px) {
@@ -187,6 +194,9 @@
 
   .btn[disabled] { opacity: .4; cursor: not-allowed; }
   .btn[disabled]:hover { background: var(--white); }
+  /* .btn has display:inline-flex which ties with [hidden]'s display:none on specificity;
+     this rule wins so hidden buttons actually hide. */
+  .btn[hidden] { display: none; }
 
   /* Sort button: custom button with inline label + chevron, hidden native select for UX */
   .select-btn {
@@ -390,7 +400,7 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 14px;
-    margin-top: 32px;
+    margin-top: 14px; /* match grid gap so promos flow as another row of cards */
   }
   @media (min-width: 810px) {
     .promos { grid-template-columns: repeat(2, 1fr); }
@@ -442,7 +452,7 @@
     .promo-cta { align-self: flex-start; }
   }
 
-  /* ---------- Back-to-top floating button ---------- */
+  /* ---------- Back-to-top floating button (Tertiary-styled) ---------- */
   .to-top {
     position: fixed;
     right: 16px;
@@ -451,17 +461,17 @@
     height: 44px;
     padding: 0;
     border-radius: 50%;
-    background: var(--ink-100);
-    color: var(--white);
-    border: 0;
+    background: var(--white);
+    color: var(--stone-100);
+    border: 1px solid var(--midnight-40);
     cursor: pointer;
     display: grid;
     place-items: center;
     opacity: 0;
     transform: translateY(12px);
     pointer-events: none;
-    transition: opacity .2s, transform .2s;
-    box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    transition: opacity .2s, transform .2s, background-color .15s, border-color .15s;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
     z-index: 20;
   }
   .to-top.is-visible {
@@ -470,7 +480,7 @@
     pointer-events: auto;
   }
   .to-top svg { width: 18px; height: 18px; display: block; }
-  .to-top:hover { background: var(--midnight-80); }
+  .to-top:hover { background: var(--cyan-10); }
 
   /* ---------- Empty state ---------- */
   .empty {
@@ -612,7 +622,7 @@
       <svg class="status-icon" aria-hidden="true"><use href="#icon-chat-clear"/></svg>
       <h3>Demo AllSet</h3>
       <p>Experience what AllSet is like for a client in our mock Personal Training business.</p>
-      <a class="btn btn-whatsapp btn-lg promo-cta" href="https://connect.allset.chat/?tenantId=allset-fitness-prod&amp;partnerId=allset-fitness" target="_blank" rel="noopener">
+      <a class="btn btn-whatsapp promo-cta" href="https://connect.allset.chat/?tenantId=allset-fitness-prod&amp;partnerId=allset-fitness" target="_blank" rel="noopener">
         <svg width="16" height="16" aria-hidden="true"><use href="#icon-whatsapp"/></svg>
         Demo in WhatsApp
       </a>
