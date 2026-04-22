@@ -49,10 +49,10 @@
     -webkit-font-smoothing: antialiased;
   }
   .wrap {
-    /* Mobile default — 20px horizontal */
+    /* Mobile default — 20px horizontal. Top padding moved into .sticky-header so it stays visible when stuck. */
     max-width: none;
     margin: 0 auto;
-    padding: 32px 20px 80px;
+    padding: 0 20px 80px;
   }
   /* Tablet: 810+  →  30px horizontal */
   @media (min-width: 810px) {
@@ -69,6 +69,16 @@
       padding-right: 50px;
       max-width: 1280px;
     }
+  }
+
+  /* ---------- Sticky header ---------- */
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--white);
+    padding-top: 32px;
+    padding-bottom: 22px;
   }
 
   /* ---------- Top controls row ---------- */
@@ -183,7 +193,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    margin-bottom: 22px;
+    margin-bottom: 0;
   }
   .badge {
     font-family: var(--font);
@@ -347,30 +357,32 @@
 
 <div class="wrap">
 
-  <div class="controls">
-    <label class="search">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
-      <input id="q" type="search" placeholder="Search" autocomplete="off" spellcheck="false">
-    </label>
-    <div class="select-wrap">
-      <select id="sort" class="btn btn-tertiary btn-lg" aria-label="Sort">
-        <option value="default">Default order</option>
-        <option value="az">Name A → Z</option>
-        <option value="za">Name Z → A</option>
-        <option value="status">By status</option>
-      </select>
+  <div class="sticky-header">
+    <div class="controls">
+      <label class="search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <input id="q" type="search" placeholder="Search" autocomplete="off" spellcheck="false">
+      </label>
+      <div class="select-wrap">
+        <select id="sort" class="btn btn-tertiary btn-lg" aria-label="Sort">
+          <option value="default">Default order</option>
+          <option value="az">Name A → Z</option>
+          <option value="za">Name Z → A</option>
+          <option value="status">By status</option>
+        </select>
+      </div>
+      <button id="clear" class="btn btn-tertiary btn-lg" type="button" disabled>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        Clear
+      </button>
     </div>
-    <button id="clear" class="btn btn-tertiary btn-lg" type="button" disabled>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-      Clear
-    </button>
-  </div>
 
-  <div class="tabs-row">
-    <div id="tabs" class="tabs" role="tablist"></div>
-  </div>
+    <div class="tabs-row">
+      <div id="tabs" class="tabs" role="tablist"></div>
+    </div>
 
-  <div id="statuses" class="statuses"></div>
+    <div id="statuses" class="statuses"></div>
+  </div>
 
   <div class="meta">
     <div><span id="count" class="count-big">0</span> <span id="count-suffix">features</span></div>
