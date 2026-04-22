@@ -98,8 +98,15 @@
     margin-bottom: 20px;
   }
   @media (max-width: 640px) {
-    .controls { grid-template-columns: auto auto 1fr; }
+    .controls { grid-template-columns: 1fr 1fr; }
     .search { grid-column: 1 / -1; }
+    .select-btn, #clear { width: 100%; }
+    /* Tags wrap to multiple rows instead of single-row scroll */
+    .tabs {
+      flex-wrap: wrap;
+      overflow: visible;
+    }
+    .tab-scroll { display: none; }
   }
 
   /* Search bar (Figma spec: 40px, Midnight 40 border, 6px radius, Inter Regular 16/24) */
@@ -165,21 +172,31 @@
   .btn[disabled] { opacity: .4; cursor: not-allowed; }
   .btn[disabled]:hover { background: var(--white); }
 
-  .select-wrap { position: relative; }
-  .select-wrap::after {
-    content: '';
-    position: absolute;
-    right: 14px; top: 50%;
-    width: 6px; height: 6px;
-    border-right: 1.5px solid var(--stone-100);
-    border-bottom: 1.5px solid var(--stone-100);
-    transform: translateY(-70%) rotate(45deg);
-    pointer-events: none;
+  /* Sort button: custom button with inline label + chevron, hidden native select for UX */
+  .select-btn {
+    position: relative;
+    cursor: pointer;
   }
-  select.btn {
+  .select-btn select {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    font: inherit;
     appearance: none;
     -webkit-appearance: none;
-    padding-right: 34px;
+  }
+  .select-chevron {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    color: var(--stone-100);
   }
 
   /* ---------- Tag tabs ---------- */
@@ -201,12 +218,6 @@
   }
   .tabs::-webkit-scrollbar { display: none; }
   .tab { flex: 0 0 auto; }
-  /* Keep "All" pinned at the left when scrolling */
-  .tab-all {
-    position: sticky;
-    left: 0;
-    z-index: 2;
-  }
   .tab .count {
     font-size: 12px;
     font-weight: 500;
@@ -411,14 +422,16 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
         <input id="q" type="search" placeholder="Search" autocomplete="off" spellcheck="false">
       </label>
-      <div class="select-wrap">
-        <select id="sort" class="btn btn-tertiary btn-lg" aria-label="Sort">
+      <label class="btn btn-tertiary btn-lg select-btn">
+        <span id="sort-label">Sort</span>
+        <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        <select id="sort" aria-label="Sort">
           <option value="default">Sort</option>
           <option value="az">Name A → Z</option>
           <option value="za">Name Z → A</option>
           <option value="status">By status</option>
         </select>
-      </div>
+      </label>
       <button id="clear" class="btn btn-tertiary btn-lg" type="button" disabled>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
         Clear
@@ -685,6 +698,7 @@ document.getElementById('q').addEventListener('input', e => {
 });
 document.getElementById('sort').addEventListener('change', e => {
   state.sort = e.target.value;
+  document.getElementById('sort-label').textContent = e.target.selectedOptions[0].text;
   applyFilterChange();
 });
 tabsEl.addEventListener('click', e => {
@@ -714,6 +728,7 @@ clearBtn.addEventListener('click', () => {
   state.sort = 'default';
   document.getElementById('q').value = '';
   document.getElementById('sort').value = 'default';
+  document.getElementById('sort-label').textContent = 'Sort';
   applyFilterChange();
 });
 loadMoreBtn.addEventListener('click', () => {
